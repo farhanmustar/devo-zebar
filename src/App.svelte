@@ -87,6 +87,12 @@
       chargePercent: 80
     };
 
+    // DEBUG: weather;
+    o.weather = {
+      celsiusTemp: 30,
+      status: 'clear_day'
+    };
+
     return o;
   }
 
@@ -117,6 +123,35 @@
     if (batteryOutput.chargePercent > 20) return 'nf nf-fa-battery_1';
     return 'nf nf-fa-battery_0';
   }
+
+  function getWeatherClass(weatherOutput) {
+    switch (weatherOutput.status) {
+      case 'clear_day':
+        return 'nf nf-weather-day_sunny';
+      case 'clear_night':
+        return 'nf nf-weather-night_clear';
+      case 'cloudy_day':
+        return 'nf nf-weather-day_cloudy';
+      case 'cloudy_night':
+        return 'nf nf-weather-night_alt_cloudy';
+      case 'light_rain_day':
+        return 'nf nf-weather-day_sprinkle';
+      case 'light_rain_night':
+        return 'nf nf-weather-night_alt_sprinkle';
+      case 'heavy_rain_day':
+        return 'nf nf-weather-day_rain';
+      case 'heavy_rain_night':
+        return 'nf nf-weather-night_alt_rain';
+      case 'snow_day':
+        return 'nf nf-weather-day_snow';
+      case 'snow_night':
+        return 'nf nf-weather-night_alt_snow';
+      case 'thunder_day':
+        return 'nf nf-weather-day_lightning';
+      case 'thunder_night':
+        return 'nf nf-weather-night_alt_lightning';
+    }
+  }
 </script>
 
 <main>
@@ -130,7 +165,8 @@
               class="workspace"
               class:focused={workspace.hasFocus}
               class:displayed={workspace.isDisplayed}
-              onClick={() => output.glazewm.runCommand(`focus --workspace ${workspace.name}`)}>
+              on:click={() =>
+                output.glazewm.runCommand(`focus --workspace ${workspace.name}`)}>
               {workspace.displayName ?? workspace.name}
             </button>
           {/each}
@@ -140,11 +176,16 @@
     <div class="center"></div>
     <div class="right">
       {#if output.glazewm}
+        {#each output.glazewm.bindingModes as bindingMode}
+          <button class="binding-mode">
+            {bindingMode.displayName ?? bindingMode.name}
+          </button>
+        {/each}
         <button
           class="tiling-direction nf {output.glazewm.tilingDirection === 'horizontal'
             ? 'nf-md-swap_horizontal'
             : 'nf-md-swap_vertical'}"
-          onClick={() => output.glazewm.runCommand('toggle-tiling-direction')}></button>
+          on:click={() => output.glazewm.runCommand('toggle-tiling-direction')}></button>
       {/if}
       {#if output.network}
         <div class="network">
@@ -195,6 +236,13 @@
           {Math.round(output.battery.chargePercent)}%
         </div>
       {/if}
+      {#if output.weather}
+        <div class="weather">
+          <i class={getWeatherClass(output.weather)}></i>
+          {Math.round(output.weather.celsiusTemp)}°C
+        </div>
+      {/if}
+      <div class="date">{output.date?.formatted}</div>
     </div>
   </div>
 </main>
