@@ -56,8 +56,10 @@ body,
 .disk,
 .memory,
 .cpu,
-.battery {
+.battery,
+.weather {
   margin-right: 20px;
+  white-space: nowrap;
 }
 
 .workspaces {

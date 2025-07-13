@@ -154,98 +154,93 @@
   }
 </script>
 
-<main>
-  <div class="app">
-    <div class="left">
-      <i class="logo nf nf-fa-windows"></i>
-      {#if output.glazewm}
-        <div class="workspaces">
-          {#each output.glazewm.currentWorkspaces as workspace}
-            <button
-              class="workspace"
-              class:focused={workspace.hasFocus}
-              class:displayed={workspace.isDisplayed}
-              on:click={() =>
-                output.glazewm.runCommand(`focus --workspace ${workspace.name}`)}>
-              {workspace.displayName ?? workspace.name}
-            </button>
-          {/each}
-        </div>
-      {/if}
-    </div>
-    <div class="center"></div>
-    <div class="right">
-      {#if output.glazewm}
-        {#each output.glazewm.bindingModes as bindingMode}
-          <button class="binding-mode">
-            {bindingMode.displayName ?? bindingMode.name}
+<div class="app">
+  <div class="left">
+    <i class="logo nf nf-fa-windows"></i>
+    {#if output.glazewm}
+      <div class="workspaces">
+        {#each output.glazewm.currentWorkspaces as workspace}
+          <button
+            class="workspace"
+            class:focused={workspace.hasFocus}
+            class:displayed={workspace.isDisplayed}
+            onclick={() => output.glazewm.runCommand(`focus --workspace ${workspace.name}`)}>
+            {workspace.displayName ?? workspace.name}
           </button>
         {/each}
-        <button
-          class="tiling-direction nf {output.glazewm.tilingDirection === 'horizontal'
-            ? 'nf-md-swap_horizontal'
-            : 'nf-md-swap_vertical'}"
-          on:click={() => output.glazewm.runCommand('toggle-tiling-direction')}></button>
-      {/if}
-      {#if output.network}
-        <div class="network">
-          <i class="nf nf-md-download"></i>
-          {output.network.traffic?.received?.iecValue.toFixed(1)}
-          &nbsp;
-          {output.network.traffic?.received?.iecUnit}
-        </div>
-        <div class="network">
-          <i class="nf nf-md-upload"></i>
-          {output.network.traffic?.transmitted?.iecValue.toFixed(1)}
-          &nbsp;
-          {output.network.traffic?.transmitted?.iecUnit}
-        </div>
-        <div class="network">
-          <i class={getNetworkClass(output.network)}></i>
-          {output.network.defaultGateway?.ssid}
-        </div>
-      {/if}
-      {#if output.disk}
-        <div class="disk">
-          <i class="nf nf-md-harddisk"></i>
-          {output.disk.disks[0].availableSpace.iecValue.toFixed(1)}
-          &nbsp;
-          {output.disk.disks[0].availableSpace.iecUnit}
-        </div>
-      {/if}
-      {#if output.memory}
-        <div class="memory">
-          <i class="nf nf-fae-chip"></i>
-          {Math.round(output.memory.usage)}%
-        </div>
-      {/if}
-      {#if output.cpu}
-        <div class="cpu">
-          <i class="nf nf-oct-cpu"></i>
-          <span class:high-usage={output.cpu.usage > 85}>
-            {Math.round(output.cpu.usage)}%
-          </span>
-        </div>
-      {/if}
-      {#if output.battery}
-        <div class="battery">
-          {#if output.battery.isCharging}
-            <i class="nf nf-md-power_plug charging-icon"></i>
-          {/if}
-          <i class={getBatteryClass(output.battery)}></i>
-          {Math.round(output.battery.chargePercent)}%
-        </div>
-      {/if}
-      {#if output.weather}
-        <div class="weather">
-          <i class={getWeatherClass(output.weather)}></i>
-          {Math.round(output.weather.celsiusTemp)}°C
-        </div>
-      {/if}
-      <div class="date">{output.date?.formatted}</div>
-    </div>
+      </div>
+    {/if}
   </div>
-</main>
+  <div class="center"></div>
+  <div class="right">
+    {#if output.glazewm}
+      {#each output.glazewm.bindingModes as bindingMode}
+        <button class="binding-mode">
+          {bindingMode.displayName ?? bindingMode.name}
+        </button>
+      {/each}
+      <button
+        aria-label="tiling direction"
+        class="tiling-direction nf"
+        class:nf-md-swap_horizontal={output.glazewm.tilingDirection === 'horizontal'}
+        class:nf-md-swap_vertical={output.glazewm.tilingDirection !== 'horizontal'}
+        onclick={() => output.glazewm.runCommand('toggle-tiling-direction')}></button>
+    {/if}
+    {#if output.network}
+      <div class="network">
+        <i class="nf nf-md-download"></i>
+        {output.network.traffic?.received?.iecValue.toFixed(1)}
+        {output.network.traffic?.received?.iecUnit}
+      </div>
+      <div class="network">
+        <i class="nf nf-md-upload"></i>
+        {output.network.traffic?.transmitted?.iecValue.toFixed(1)}
+        {output.network.traffic?.transmitted?.iecUnit}
+      </div>
+      <div class="network">
+        <i class={getNetworkClass(output.network)}></i>
+        {output.network.defaultGateway?.ssid}
+      </div>
+    {/if}
+    {#if output.disk}
+      <div class="disk">
+        <i class="nf nf-md-harddisk"></i>
+        {output.disk.disks[0].availableSpace.iecValue.toFixed(1)}
+        {output.disk.disks[0].availableSpace.iecUnit}
+      </div>
+    {/if}
+    {#if output.memory}
+      <div class="memory">
+        <i class="nf nf-fae-chip"></i>
+        {Math.round(output.memory.usage)}%
+      </div>
+    {/if}
+    {#if output.cpu}
+      <div class="cpu">
+        <i class="nf nf-oct-cpu"></i>
+        <span class:high-usage={output.cpu.usage > 85}>
+          {Math.round(output.cpu.usage)}%
+        </span>
+      </div>
+    {/if}
+    {#if output.battery}
+      <div class="battery">
+        {#if output.battery.isCharging}
+          <i class="nf nf-md-power_plug charging-icon"></i>
+        {/if}
+        <i class={getBatteryClass(output.battery)}></i>
+        {Math.round(output.battery.chargePercent)}%
+      </div>
+    {/if}
+    {#if output.weather}
+      <div class="weather">
+        <i class={getWeatherClass(output.weather)}></i>
+        {Math.round(output.weather.celsiusTemp)}°C
+      </div>
+    {/if}
+    <div class="date">{output.date?.formatted}</div>
+  </div>
+</div>
 
 <style>
 </style>
