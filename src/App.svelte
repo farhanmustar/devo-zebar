@@ -15,12 +15,28 @@
   providers.onOutput(() => output = debug(providers.outputMap));
 
   function debug(o) {
-    // TODO: enable based on preprocessor logic.
+    if (import.meta.env.MODE === 'production') {
+      return o;
+    }
 
     // DEBUG: glazewm;
     o.glazewm = {
       tilingDirection: 'horizontal',
       runCommand: () => {},
+      currentWorkspaces: [
+        {
+          name: 1,
+          displayName: 1,
+          hasFocus: true,
+          isDisplayed: true,
+        },
+        {
+          name: 2,
+          displayName: 2,
+          hasFocus: false,
+          isDisplayed: false,
+        }
+      ]
     }
 
     // DEBUG: network;
@@ -117,6 +133,21 @@
   <div class="app">
     <div class="left">
       <i class="logo nf nf-fa-windows"></i>
+      {#if output.glazewm}
+        <div class="workspaces">
+          {#each output.glazewm.currentWorkspaces as workspace}
+            <button class="workspace" class:focused={workspace.hasFocus} class:displayed={workspace.isDisplayed}
+              onClick={() =>
+                output.glazewm.runCommand(
+                  `focus --workspace ${workspace.name}`,
+                )
+              }
+            >
+              {workspace.displayName ?? workspace.name}
+            </button>
+          {/each}
+        </div>
+      {/if}
     </div>
     <div class="center">
     </div>
