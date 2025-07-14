@@ -1,5 +1,7 @@
 <script>
   import * as zebar from 'zebar';
+  import WaktuSolat from './components/WaktuSolat.svelte';
+
   const providers = zebar.createProviderGroup({
     network: { type: 'network' },
     glazewm: { type: 'glazewm' },
@@ -170,6 +172,7 @@
         {/each}
       </div>
     {/if}
+    <WaktuSolat/>
   </div>
   <div class="center"></div>
   <div class="right">
