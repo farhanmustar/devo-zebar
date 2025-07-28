@@ -33,13 +33,12 @@
     const now = DateTime.now();
     if (
       !waktuSolat.serverTime ||
-      waktuSolat.serverTime.startOf('day').equals(now.startOf('day'))
+      !waktuSolat.serverTime.startOf('day').equals(now.startOf('day'))
     ) {
       const data = await getWaktuSolat();
       waktuSolat = data;
     }
 
-    console.log(waktuSolat.fajr);
     if (now < waktuSolat.fajr) {
       display = `Subuh ${waktuSolat.fajr.toFormat('hh:mm a')}`;
     } else if (now < waktuSolat.dhuhr) {
