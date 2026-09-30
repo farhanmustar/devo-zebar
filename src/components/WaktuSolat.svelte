@@ -17,14 +17,18 @@
     data.zone = raw.zone;
     data.serverTime = DateTime.fromFormat(raw.serverTime, 'yyyy-MM-dd HH:mm:ss');
 
-    data.imsak = DateTime.fromFormat(`${data.date} ${data.imsak}`, 'dd-MMM-yyyy HH:mm:ss');
-    data.fajr = DateTime.fromFormat(`${data.date} ${data.fajr}`, 'dd-MMM-yyyy HH:mm:ss');
-    data.syuruk = DateTime.fromFormat(`${data.date} ${data.syuruk}`, 'dd-MMM-yyyy HH:mm:ss');
-    data.dhuhr = DateTime.fromFormat(`${data.date} ${data.dhuhr}`, 'dd-MMM-yyyy HH:mm:ss');
-    data.asr = DateTime.fromFormat(`${data.date} ${data.asr}`, 'dd-MMM-yyyy HH:mm:ss');
-    data.maghrib = DateTime.fromFormat(`${data.date} ${data.maghrib}`, 'dd-MMM-yyyy HH:mm:ss');
-    data.isha = DateTime.fromFormat(`${data.date} ${data.isha}`, 'dd-MMM-yyyy HH:mm:ss');
-    data.date = DateTime.fromFormat(data.date, 'dd-MMM-yyyy');
+    // `data.date` uses Malay month names (e.g. "01-Okt-2026") which luxon
+    // cannot parse, so take the date from `serverTime` instead.
+    const day = raw.serverTime.split(' ')[0];
+    const parseTime = (time) => DateTime.fromFormat(`${day} ${time}`, 'yyyy-MM-dd HH:mm:ss');
+    data.imsak = parseTime(data.imsak);
+    data.fajr = parseTime(data.fajr);
+    data.syuruk = parseTime(data.syuruk);
+    data.dhuhr = parseTime(data.dhuhr);
+    data.asr = parseTime(data.asr);
+    data.maghrib = parseTime(data.maghrib);
+    data.isha = parseTime(data.isha);
+    data.date = DateTime.fromISO(day);
 
     return data;
   }
