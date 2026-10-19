@@ -1,5 +1,6 @@
 <script>
   import * as zebar from 'zebar';
+  import Battery from './components/Battery.svelte';
   import WaktuSolat from './components/WaktuSolat.svelte';
 
   const providers = zebar.createProviderGroup({
@@ -7,9 +8,7 @@
     glazewm: { type: 'glazewm' },
     cpu: { type: 'cpu' },
     date: { type: 'date', formatting: 'EEE f' },
-    battery: { type: 'battery' },
     memory: { type: 'memory' },
-    weather: { type: 'weather' },
     disk: { type: 'disk' }
   });
 
@@ -83,18 +82,6 @@
       usage: 10
     };
 
-    // DEBUG: battery;
-    o.battery = {
-      isCharging: false,
-      chargePercent: 80
-    };
-
-    // DEBUG: weather;
-    o.weather = {
-      celsiusTemp: 30,
-      status: 'clear_day'
-    };
-
     return o;
   }
 
@@ -116,42 +103,6 @@
         }
       default:
         return 'nf nf-md-wifi_strength_off_outline';
-    }
-  }
-  function getBatteryClass(batteryOutput) {
-    if (batteryOutput.chargePercent > 90) return 'nf nf-fa-battery_4';
-    if (batteryOutput.chargePercent > 70) return 'nf nf-fa-battery_3';
-    if (batteryOutput.chargePercent > 40) return 'nf nf-fa-battery_2';
-    if (batteryOutput.chargePercent > 20) return 'nf nf-fa-battery_1';
-    return 'nf nf-fa-battery_0';
-  }
-
-  function getWeatherClass(weatherOutput) {
-    switch (weatherOutput.status) {
-      case 'clear_day':
-        return 'nf nf-weather-day_sunny';
-      case 'clear_night':
-        return 'nf nf-weather-night_clear';
-      case 'cloudy_day':
-        return 'nf nf-weather-day_cloudy';
-      case 'cloudy_night':
-        return 'nf nf-weather-night_alt_cloudy';
-      case 'light_rain_day':
-        return 'nf nf-weather-day_sprinkle';
-      case 'light_rain_night':
-        return 'nf nf-weather-night_alt_sprinkle';
-      case 'heavy_rain_day':
-        return 'nf nf-weather-day_rain';
-      case 'heavy_rain_night':
-        return 'nf nf-weather-night_alt_rain';
-      case 'snow_day':
-        return 'nf nf-weather-day_snow';
-      case 'snow_night':
-        return 'nf nf-weather-night_alt_snow';
-      case 'thunder_day':
-        return 'nf nf-weather-day_lightning';
-      case 'thunder_night':
-        return 'nf nf-weather-night_alt_lightning';
     }
   }
 </script>
@@ -226,21 +177,7 @@
         </span>
       </div>
     {/if}
-    {#if output.battery}
-      <div class="battery">
-        {#if output.battery.isCharging}
-          <i class="nf nf-md-power_plug charging-icon"></i>
-        {/if}
-        <i class={getBatteryClass(output.battery)}></i>
-        {Math.round(output.battery.chargePercent)}%
-      </div>
-    {/if}
-    {#if output.weather}
-      <div class="weather">
-        <i class={getWeatherClass(output.weather)}></i>
-        {Math.round(output.weather.celsiusTemp)}°C
-      </div>
-    {/if}
+    <Battery/>
     <div class="date">{output.date?.formatted}</div>
   </div>
 </div>
