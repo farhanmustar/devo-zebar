@@ -18,7 +18,12 @@
       "includeFiles": ["dist/**"],
       "caching": {
         "defaultDuration": 604800,
-        "rules": []
+        "rules": [
+          {
+            "urlRegex": "^https://www\\.e-solat\\.gov\\.my/",
+            "duration": 0
+          }
+        ]
       },
       "privileges": {
         "shellCommands": []

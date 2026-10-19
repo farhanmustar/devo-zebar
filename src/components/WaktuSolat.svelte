@@ -8,7 +8,10 @@
   let display = $state('');
 
   async function getWaktuSolat(zone = 'SGR01') {
-    const response = await fetch(url + zone);
+    // Add today's date so Zebar's service worker cache never serves a
+    // previous day's response (the API ignores the extra parameter).
+    const requestUrl = `${url}${zone}&_=${DateTime.now().toISODate()}`;
+    const response = await fetch(requestUrl);
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
@@ -39,7 +42,13 @@
       !waktuSolat.serverTime ||
       !waktuSolat.serverTime.startOf('day').equals(now.startOf('day'))
     ) {
-      const data = await getWaktuSolat();
+      let data;
+      try {
+        data = await getWaktuSolat();
+      } catch (err) {
+        console.error('[WaktuSolat] fetch failed', err);
+        return;
+      }
       waktuSolat = data;
     }
 
